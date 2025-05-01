@@ -8,14 +8,14 @@ import Dashboard from './pages/Dashboard';
 function App() {
   return (
     <BrowserRouter>
-      <Layout> 
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/event/:id" element={<EventPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
-      </Layout>
+
       {/* Attribution link til APIet */}
     </BrowserRouter>
   );
