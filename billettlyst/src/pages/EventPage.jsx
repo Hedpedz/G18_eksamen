@@ -24,7 +24,6 @@ export default function EventPage() {
   
   return (
     <div>
-      <h1>Hello World</h1>
       {event ? (
         <pre>{JSON.stringify(event, null, 2)}</pre>
       ) : (
