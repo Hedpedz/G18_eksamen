@@ -1,8 +1,11 @@
+import '../styles/EventCard.scss';
+
 export default function VenueCard({ name, image, country, city }) {
   return (
-    <article>
-      <h1>{name}</h1>
-      <img src={image} alt={name} style={{ width: "25%", height: "auto" }} />
+    <article className='event-card'>
+      
+      <img src={image} alt={name} />
+      <h2>{name}</h2>
       <p>{country}</p>
       <p>{city}</p>
     </article>

@@ -1,7 +1,9 @@
+import '../styles/EventCard.scss';
+
 export default function AttractionCard({ name, image }) {
   return (
-    <article>
-    <img src={image} alt={name} style={{ width: "25%", height: "auto" }} />
+    <article className="event-card">
+    <img src={image} alt={name} />
       <h1>{name}</h1>
     </article>
   );
