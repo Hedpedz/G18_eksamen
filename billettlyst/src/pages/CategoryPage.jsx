@@ -163,6 +163,8 @@ export default function CategoryPage() {
   
   return (
     <>
+    <h1>Søkefelt</h1>
+    <section className="EventContainer">
       <input
         type="text"
         placeholder="Søk..."
@@ -187,7 +189,7 @@ export default function CategoryPage() {
         value={City}
         onChange={(event) => setCity(event.target.value)}
       />
-
+</section>
       <h1>Attraksjoner</h1>
       <section className="EventContainer">
         {attractions.map((attraction) => (
