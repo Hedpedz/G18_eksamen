@@ -210,7 +210,7 @@ export default function CategoryPage() {
                 name={event.name}
                 date={event.dates?.start?.localDate}
                 image={event.images?.[0]?.url}
-                link={event.url}
+                link={event.id}
               />
             ))}
           </>
@@ -223,6 +223,7 @@ export default function CategoryPage() {
       <section className="EventContainer">
         {venues.map((venue) => (
           <VenueCard
+           key={venue.id}
             name={venue.name}
             image={venue.images?.[0]?.url}
             country={venue.country?.name}
