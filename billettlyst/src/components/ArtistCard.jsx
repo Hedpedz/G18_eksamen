@@ -1,10 +1,11 @@
 import '../styles/EventCard.scss';
 
-export default function AttractionCard({ name, image }) {
+export default function ArtistCard({ name, image, genre }) {
   return (
     <article className="event-card">
     <img src={image} alt={name} />
-      <h1>{name}</h1>
+      <h2>{name}</h2>
+      <h4>{genre}</h4>
     </article>
   );
 }

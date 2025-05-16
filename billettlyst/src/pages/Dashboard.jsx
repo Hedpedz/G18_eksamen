@@ -1,31 +1,57 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Dashboard() {
   const [username, setUsername] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleClick = (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
-    console.log(username);
-  }
+    if (!isLoggedIn) {
+      localStorage.setItem("username", username);
+      setIsLoggedIn(true);
+    }
+  };
 
-  return(
+  const handleLogout = (event) => {
+    event.preventDefault();
+    if (isLoggedIn) {
+      localStorage.removeItem("username");
+      setIsLoggedIn(false);
+    }
+  };
+
+  useEffect(() => {
+   
+    if(localStorage.getItem("username")){
+      setIsLoggedIn(true)
+    }else{
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  return (
     <section>
-      
-    <h1>Logg inn</h1>
-    <form>
-      <label>
-        Brukernavn
-        <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        >
-        </input>
-      </label>
-      <button onClick={handleClick}>Logg inn</button>
-    </form> 
-
+      {isLoggedIn ? (
+        <article>
+          <h1> Min side </h1>
+          <button onClick={handleLogout}>Logg inn</button>
+        </article>
+      ) : (
+        <article>
+          <h1>Logg inn</h1>
+          <form>
+            <label>
+              Brukernavn
+              <input
+                type="text"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+              ></input>
+            </label>
+            <button onClick={handleLogin}>Logg inn</button>
+          </form>
+        </article>
+      )}
     </section>
-  ) 
- 
+  );
 }
