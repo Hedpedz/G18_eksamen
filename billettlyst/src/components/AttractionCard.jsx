@@ -8,7 +8,7 @@ export default function AttractionCard({ id, name, image, showHeart, isSaved, on
 
   return (
     <article className="event-card">
-    <img src={image} alt={name} />
+    <img src={image} alt={name}/>
       <h1>{name}</h1>
       {showHeart &&(
         <button

@@ -8,8 +8,7 @@ export default function VenueCard({ id, name, image, country, city, showHeart, i
 
 
   return (
-    <article className='event-card'>
-      
+    <article className="event-card">
       <img src={image} alt={name} />
       <h2>{name}</h2>
       {showHeart &&(
@@ -23,7 +22,6 @@ export default function VenueCard({ id, name, image, country, city, showHeart, i
           className="heart-icon"/>
         </button>
       )}
-      
       <p>{country}</p>
       <p>{city}</p>
     </article>
