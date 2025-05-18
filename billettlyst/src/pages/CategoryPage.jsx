@@ -38,32 +38,34 @@ export default function CategoryPage() {
   const [Country, setCountry] = useState("");
   const [City, setCity] = useState("");
 
+  const isFormValid = City !== "" && Country !== "";
 
 
-    const [wishlist, setWishlist] = useState([]);
 
-    useEffect(() => {
-      const savedWishlist = localStorage.getItem("wishlist");
-  
-      if(savedWishlist){
-        setWishlist(JSON.parse(savedWishlist));
-      }
-    }, []);
-  
-    const handleWishlistClick = (id) => {
-      let updated;
-  
-      if(wishlist.includes(id)){
-        updated = wishlist.filter((item) => item !==id);
-        } else {
-          updated = [...wishlist, id]
-        }
-  
-        setWishlist(updated);
-        localStorage.setItem("wishlist", JSON.stringify(updated));
-      };
-  
-  
+  const [wishlist, setWishlist] = useState([]);
+
+  useEffect(() => {
+    const savedWishlist = localStorage.getItem("wishlist");
+
+    if (savedWishlist) {
+      setWishlist(JSON.parse(savedWishlist));
+    }
+  }, []);
+
+  const handleWishlistClick = (id) => {
+    let updated;
+
+    if (wishlist.includes(id)) {
+      updated = wishlist.filter((item) => item !== id);
+    } else {
+      updated = [...wishlist, id]
+    }
+
+    setWishlist(updated);
+    localStorage.setItem("wishlist", JSON.stringify(updated));
+  };
+
+
 
   useEffect(() => {
     const category = clasificationMap[slug?.toLowerCase()] || slug;
@@ -145,147 +147,137 @@ export default function CategoryPage() {
 
     let fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&apikey=${API_Key}&locale=*&sort=date,asc`;
 
-    if(City != ""){
-      fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&apikey=${API_Key}&locale=*&sort=date,asc`;
+    if (search != "") {
+      fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&keyword=${search}&apikey=${API_Key}&locale=*&sort=date,asc`;
+    }
 
-      if (Date != ""){
-        const dateString = Date + "T01:00:00Z";
-        console.log(dateString);
-        fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&startDateTime=${dateString}&apikey=${API_Key}&locale=*&sort=date,asc`;
-      
-        if(search != ""){
-          fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&startDateTime=${dateString}&keyword=${search}&apikey=${API_Key}&locale=*&sort=date,asc`;
-        }
-      }
+    if (Date != "") {
+      const dateString = Date + "T01:00:00Z";
+      fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&startDateTime=${dateString}&apikey=${API_Key}&locale=*&sort=date,asc`;
 
-      if(search != ""){
-        fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&keyword=${search}&apikey=${API_Key}&locale=*&sort=date,asc`;
+      if (search != "") {
+        fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&startDateTime=${dateString}&keyword=${search}&apikey=${API_Key}&locale=*&sort=date,asc`;
       }
     }
 
-    if(search != ""){
-      console.log(search);
-      fetchURL = `https://app.ticketmaster.com/discovery/v2/events?&keyword=${search}&apikey=${API_Key}&locale=*&sort=date,asc`;
-    }
+  try {
+    const response = await fetch(
+      fetchURL
+    );
+    const data = await response.json();
 
-    try {
-      const response = await fetch(
-        fetchURL
-      );
-      const data = await response.json();
+    setEvents(data._embedded.events);
 
-      setEvents(data._embedded.events);
-  
-    } catch (error) {
-      console.error("Fant ingen events");
-      setAttractions([]);
-    }
-
-    console.log(events);
+  } catch (error) {
+    console.error("Fant ingen events");
+    setEvents([]);
   }
 
-  
-  return (
-    <>
-     <h1>Søkefelt</h1>
-      <section className="EventContainer">
-        <input
-          type="text"
-          placeholder="Søk..."
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        ></input>
+  console.log(events);
+}
 
-        <input
-          type="date"
-          value={Date}
-          onChange={(event) => setDate(event.target.value)}
-        />
-        <section>
-          <label>Velg et land: </label>
-          <select value={Country} onChange={(e) => setCountry(e.target.value)}>
-            <option value="">Velg et land</option>
-            {Object.keys(countryCities).map((country) => (
-              <option key={country} value={country}>
-                {country}
+
+return (
+  <>
+    <h1>Søkefelt</h1>
+    <section className="EventContainer">
+      <input
+        type="text"
+        placeholder="Søk..."
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+      ></input>
+
+      <input
+        type="date"
+        value={Date}
+        onChange={(event) => setDate(event.target.value)}
+      />
+      <section>
+        <label>Velg et land: </label>
+        <select value={Country} onChange={(e) => setCountry(e.target.value)}>
+          <option value="">Velg et land</option>
+          {Object.keys(countryCities).map((country) => (
+            <option key={country} value={country}>
+              {country}
+            </option>
+          ))}
+        </select>
+
+        <label>Velg en by: </label>
+        <select
+          value={City}
+          onChange={(e) => setCity(e.target.value)}
+          disabled={!Country}
+        >
+          <option value="">Velg en by</option>
+          {Country &&
+            countryCities[Country].map((city) => (
+              <option key={city} value={city}>
+                {city}
               </option>
             ))}
-          </select>
+        </select>
+      </section>
+      <button onClick={filterEvents} disabled={!isFormValid}>Filter</button>
+    </section>
+    <h1>Attraksjoner</h1>
+    <section className="EventContainer">
+      {attractions.map((attraction) => (
+        <AttractionCard
+          key={attraction.id}
+          id={attraction.id}
+          name={attraction.name}
+          image={attraction.images?.[0]?.url}
+          showHeart={true}
+          isSaved={wishlist.includes(attraction.id)}
+          onToggleSave={handleWishlistClick}
 
-          <label>Velg en by: </label>
-          <select
-            value={City}
-            onChange={(e) => setCity(e.target.value)}
-            disabled={!Country}
-          >
-            <option value="">Velg en by</option>
-            {Country &&
-              countryCities[Country].map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-          </select>
-        </section>
-        <button onClick={filterEvents}>Filter</button>
-      </section>
-      <h1>Attraksjoner</h1>
-      <section className="EventContainer">
-        {attractions.map((attraction) => (
-          <AttractionCard
-            key={attraction.id}
-            id={attraction.id}
-            name={attraction.name}
-            image={attraction.images?.[0]?.url}
-            showHeart={true}
-            isSaved={wishlist.includes(attraction.id)}
-            onToggleSave={handleWishlistClick}
+        />
+      ))}
+    </section>
+    <h1>Arrangementer</h1>
+    <section className="EventContainer">
+      {events.length > 0 ? (
+        <>
+          {events.map((event) => (
+            <EventCard
+              key={event.id}
+              id={event.id}
+              name={event.name}
+              date={event.dates?.start?.localDate}
+              image={event.images?.[0]?.url}
+              link={event.id}
+              showHeart={true}
+              isSaved={wishlist.includes(event.id)}
+              onToggleSave={handleWishlistClick}
 
-          />
-        ))}
-      </section>
-      <h1>Arrangementer</h1>
-      <section className="EventContainer">
-        {events.length > 0 ? (
-          <>
-            {events.map((event) => (
-              <EventCard
-                key={event.id}
-                id={event.id}
-                name={event.name}
-                date={event.dates?.start?.localDate}
-                image={event.images?.[0]?.url}
-                link={event.id}
-                showHeart={true}
-                isSaved={wishlist.includes(event.id)}
-                onToggleSave={handleWishlistClick}
-    
-              />
-            ))}
-          </>
-        ) : (
-          <p>Ingen arrangementer funnet.</p>
-        )}
-      </section>
-      <section></section>
-      <h1>Spillesteder:</h1>
-      <section className="EventContainer">
-        {venues.map((venue) => (
-          <VenueCard
-           key={venue.id}
-           id={venue.id}
-            name={venue.name}
-            image={venue.images?.[0]?.url}
-            country={venue.country?.name}
-            city={venue.city?.name}
-            showHeart={true}
-            isSaved={wishlist.includes(venue.id)}
-            onToggleSave={handleWishlistClick}
+            />
+          ))}
+        </>
+      ) : (
+        <p>Ingen arrangementer funnet.</p>
+      )}
+    </section>
+    <section></section>
+    <h1>Spillesteder:</h1>
+    <section className="EventContainer">
+      {venues.map((venue) => (
+        <VenueCard
+          key={venue.id}
+          id={venue.id}
+          name={venue.name}
+          image={venue.images?.[0]?.url}
+          country={venue.country?.name}
+          city={venue.city?.name}
+          showHeart={true}
+          isSaved={wishlist.includes(venue.id)}
+          onToggleSave={handleWishlistClick}
 
-          />
-        ))}
-      </section>
-    </>
-  );
-}
+        />
+      ))}
+    </section>
+  </>
+);
+  }
 
