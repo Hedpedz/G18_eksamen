@@ -4,9 +4,6 @@ import AttractionCard from "../components/AttractionCard";
 import EventCard from "../components/EventCard";
 import VenueCard from "../components/VenueCard";
 import "../styles/CategoryPage.scss";
-import SearchBar from "../components/SearchBar";
-import CountryCitySelector from "../components/CountryCitySelector"; // tilpass path om nødvendig
-
 
 const API_Key = "An0Gfh3JYmKpW5rJIqCetXQuRadlfUhp";
 
@@ -25,43 +22,48 @@ const clasificationMap = {
   },
 };
 
+const countryCities = {
+  Norge: ["Oslo", "Bergen", "Trondheim", "Stavanger"],
+  Sverige: ["Stockholm", "Gøteborg", "Malmö"],
+  Danmark: ["København", "Aarhus", "Odense"],
+};
+
 export default function CategoryPage() {
   const { slug } = useParams();
   const [events, setEvents] = useState([]);
   const [venues, setVenues] = useState([]);
   const [attractions, setAttractions] = useState([]);
-  const [originalAttractions, setOriginalAttractions] = useState([]);
-  const [originalEvents, setOriginalEvents] = useState([]);
-  const [originalVenues, setOriginalVenues] = useState([]);
   const [search, setSearch] = useState("");
   const [Date, setDate] = useState("");
   const [Country, setCountry] = useState("");
   const [City, setCity] = useState("");
 
-    //ønskeliste
-  const [wishlist, setWishlist] = useState([]);
 
-  useEffect(() => {
-    const savedWishlist = localStorage.getItem("wishlist");
 
-    if(savedWishlist){
-      setWishlist(JSON.parse(savedWishlist));
-    }
-  }, []);
+    const [wishlist, setWishlist] = useState([]);
 
-  const handleWishlistClick = (id) => {
-    let updated;
-
-    if(wishlist.includes(id)){
-      updated = wishlist.filter((item) => item !==id);
-      } else {
-        updated = [...wishlist, id]
+    useEffect(() => {
+      const savedWishlist = localStorage.getItem("wishlist");
+  
+      if(savedWishlist){
+        setWishlist(JSON.parse(savedWishlist));
       }
-
-      setWishlist(updated);
-      localStorage.setItem("wishlist", JSON.stringify(updated));
-    };
-
+    }, []);
+  
+    const handleWishlistClick = (id) => {
+      let updated;
+  
+      if(wishlist.includes(id)){
+        updated = wishlist.filter((item) => item !==id);
+        } else {
+          updated = [...wishlist, id]
+        }
+  
+        setWishlist(updated);
+        localStorage.setItem("wishlist", JSON.stringify(updated));
+      };
+  
+  
 
   useEffect(() => {
     const category = clasificationMap[slug?.toLowerCase()] || slug;
@@ -76,10 +78,8 @@ export default function CategoryPage() {
 
         if (data._embedded?.attractions) {
           setAttractions(data._embedded.attractions);
-          setOriginalAttractions(data._embedded.attractions);
         } else {
           setAttractions([]);
-          setOriginalAttractions([]);
         }
       } catch (error) {
         console.error("Fant ingen attraksjoner");
@@ -103,7 +103,6 @@ export default function CategoryPage() {
 
         if (data._embedded?.events) {
           setEvents(data._embedded.events);
-          setOriginalEvents(data._embedded.events);
         } else {
           setEvents([]);
         }
@@ -129,10 +128,8 @@ export default function CategoryPage() {
 
         if (data._embedded?.venues) {
           setVenues(data._embedded.venues);
-          setOriginalVenues(data._embedded.venues);
         } else {
           setVenues([]);
-          setOriginalVenues([]);
         }
       } catch (error) {
         console.error("Something went wrong!");
@@ -143,83 +140,107 @@ export default function CategoryPage() {
     fetchVenues();
   }, [slug]);
 
-  useEffect(() => {
-    const filteredAttractions = originalAttractions.filter((attraction) =>
-      attraction.name.toLowerCase().includes(search.toLowerCase())
-    );
+  const filterEvents = async (event) => {
+    event.preventDefault;
 
-    const filteredEvents = originalEvents.filter((events) =>
-      events.name.toLowerCase().includes(search.toLowerCase())
-    );
+    let fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&apikey=${API_Key}&locale=*&sort=date,asc`;
 
-    const filteredVenues = originalVenues.filter((venues) =>
-      venues.city?.name?.toLowerCase().includes(City.toLowerCase())
-    );
+    if(City != ""){
+      fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&apikey=${API_Key}&locale=*&sort=date,asc`;
 
-    setAttractions(filteredAttractions);
-    setVenues(filteredVenues);
-    setEvents(filteredEvents);
+      if (Date != ""){
+        const dateString = Date + "T01:00:00Z";
+        console.log(dateString);
+        fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&startDateTime=${dateString}&apikey=${API_Key}&locale=*&sort=date,asc`;
+      
+        if(search != ""){
+          fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&startDateTime=${dateString}&keyword=${search}&apikey=${API_Key}&locale=*&sort=date,asc`;
+        }
+      }
 
-  }, [search, City, Country, originalEvents, originalAttractions, originalVenues]);
+      if(search != ""){
+        fetchURL = `https://app.ticketmaster.com/discovery/v2/events?city=${City}&keyword=${search}&apikey=${API_Key}&locale=*&sort=date,asc`;
+      }
+    }
 
-  useEffect(() => {
-   
+    if(search != ""){
+      console.log(search);
+      fetchURL = `https://app.ticketmaster.com/discovery/v2/events?&keyword=${search}&apikey=${API_Key}&locale=*&sort=date,asc`;
+    }
 
-    const filteredEvents = originalEvents.filter((events) =>
-      events._embedded?.venues[0]?.country.name.toLowerCase().includes(Country.toLowerCase())
-    );
+    try {
+      const response = await fetch(
+        fetchURL
+      );
+      const data = await response.json();
 
-    const filteredVenues = originalVenues.filter((venues) =>
-      venues.country?.name?.toLowerCase().includes(Country.toLowerCase())
-    );
-
-    setVenues(filteredVenues);
-    setEvents(filteredEvents);
-
-  }, [Country, originalEvents, originalVenues]);
-
-  useEffect(() => {
-    const filtered = originalEvents.filter(
-      (event) => event.dates?.start?.localDate === Date
-    
-    );
-
-    setEvents(filtered);
+      setEvents(data._embedded.events);
   
-  }, [Date, originalEvents]);
+    } catch (error) {
+      console.error("Fant ingen events");
+      setAttractions([]);
+    }
+
+    console.log(events);
+  }
 
   
   return (
     <>
-    <h1>Søkefelt</h1>
-    <section className="EventContainer">
+     <h1>Søkefelt</h1>
+      <section className="EventContainer">
+        <input
+          type="text"
+          placeholder="Søk..."
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        ></input>
 
-      <SearchBar search={search} setSearch={setSearch} />
+        <input
+          type="date"
+          value={Date}
+          onChange={(event) => setDate(event.target.value)}
+        />
+        <section>
+          <label>Velg et land: </label>
+          <select value={Country} onChange={(e) => setCountry(e.target.value)}>
+            <option value="">Velg et land</option>
+            {Object.keys(countryCities).map((country) => (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
 
-      <input
-        type="date"
-        value={Date}
-        onChange={(event) => setDate(event.target.value)}
-      />
-      <CountryCitySelector
-  selectedCountry={Country}
-  selectedCity={City}
-  onCountryChange={setCountry}
-  onCityChange={setCity}
-/>
-
-      
-</section>
+          <label>Velg en by: </label>
+          <select
+            value={City}
+            onChange={(e) => setCity(e.target.value)}
+            disabled={!Country}
+          >
+            <option value="">Velg en by</option>
+            {Country &&
+              countryCities[Country].map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+          </select>
+        </section>
+        <button onClick={filterEvents}>Filter</button>
+      </section>
       <h1>Attraksjoner</h1>
       <section className="EventContainer">
         {attractions.map((attraction) => (
           <AttractionCard
+            key={attraction.id}
             id={attraction.id}
             name={attraction.name}
             image={attraction.images?.[0]?.url}
             showHeart={true}
             isSaved={wishlist.includes(attraction.id)}
             onToggleSave={handleWishlistClick}
+
           />
         ))}
       </section>
@@ -229,6 +250,7 @@ export default function CategoryPage() {
           <>
             {events.map((event) => (
               <EventCard
+                key={event.id}
                 id={event.id}
                 name={event.name}
                 date={event.dates?.start?.localDate}
@@ -237,6 +259,7 @@ export default function CategoryPage() {
                 showHeart={true}
                 isSaved={wishlist.includes(event.id)}
                 onToggleSave={handleWishlistClick}
+    
               />
             ))}
           </>
@@ -249,6 +272,7 @@ export default function CategoryPage() {
       <section className="EventContainer">
         {venues.map((venue) => (
           <VenueCard
+           key={venue.id}
            id={venue.id}
             name={venue.name}
             image={venue.images?.[0]?.url}
@@ -257,9 +281,11 @@ export default function CategoryPage() {
             showHeart={true}
             isSaved={wishlist.includes(venue.id)}
             onToggleSave={handleWishlistClick}
+
           />
         ))}
       </section>
     </>
   );
 }
+
