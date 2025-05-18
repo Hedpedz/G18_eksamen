@@ -4,6 +4,9 @@ import AttractionCard from "../components/AttractionCard";
 import EventCard from "../components/EventCard";
 import VenueCard from "../components/VenueCard";
 import "../styles/CategoryPage.scss";
+import SearchBar from "../components/SearchBar";
+import CountryCitySelector from "../components/CountryCitySelector"; // tilpass path om nødvendig
+
 
 const API_Key = "An0Gfh3JYmKpW5rJIqCetXQuRadlfUhp";
 
@@ -190,30 +193,22 @@ export default function CategoryPage() {
     <>
     <h1>Søkefelt</h1>
     <section className="EventContainer">
-      <input
-        type="text"
-        placeholder="Søk..."
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-      />
+
+      <SearchBar search={search} setSearch={setSearch} />
 
       <input
         type="date"
         value={Date}
         onChange={(event) => setDate(event.target.value)}
       />
-      <input
-        type="text"
-        placeholder="Land"
-        value={Country}
-        onChange={(event) => setCountry(event.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="By"
-        value={City}
-        onChange={(event) => setCity(event.target.value)}
-      />
+      <CountryCitySelector
+  selectedCountry={Country}
+  selectedCity={City}
+  onCountryChange={setCountry}
+  onCityChange={setCity}
+/>
+
+      
 </section>
       <h1>Attraksjoner</h1>
       <section className="EventContainer">
