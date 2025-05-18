@@ -1,10 +1,25 @@
 import '../styles/EventCard.scss';
+import regularHeartIcon from '../website_images/heart-regular.svg';
+import solidHeartIcon from '../website_images/heart-solid.svg';
 
-export default function AttractionCard({ name, image }) {
+export default function AttractionCard({ id, name, image, showHeart, isSaved, onToggleSave }) {
+
+  const heartIcon = isSaved ? solidHeartIcon : regularHeartIcon;
+
   return (
     <article className="event-card">
     <img src={image} alt={name} />
       <h1>{name}</h1>
+      {showHeart &&(
+        <button
+        onClick={() => onToggleSave(id)}
+        className= "heart-button"
+        >
+          <img src={heartIcon} 
+          alt="Legg til i ønskeliste"
+          className = "heart-icon"/>
+        </button>
+      )}
     </article>
   );
 }
