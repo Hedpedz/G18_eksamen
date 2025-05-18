@@ -9,4 +9,7 @@ img{
 section{
     display: flex;
     gap: 2rem;
+    padding: 2rem 0 0 0;
+    flex-wrap: wrap;
+    overflow: auto;
 }
