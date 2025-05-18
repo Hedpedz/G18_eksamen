@@ -35,6 +35,31 @@ export default function CategoryPage() {
   const [Country, setCountry] = useState("");
   const [City, setCity] = useState("");
 
+    //ønskeliste
+  const [wishlist, setWishlist] = useState([]);
+
+  useEffect(() => {
+    const savedWishlist = localStorage.getItem("wishlist");
+
+    if(savedWishlist){
+      setWishlist(JSON.parse(savedWishlist));
+    }
+  }, []);
+
+  const handleWishlistClick = (id) => {
+    let updated;
+
+    if(wishlist.includes(id)){
+      updated = wishlist.filter((item) => item !==id);
+      } else {
+        updated = [...wishlist, id]
+      }
+
+      setWishlist(updated);
+      localStorage.setItem("wishlist", JSON.stringify(updated));
+    };
+
+
   useEffect(() => {
     const category = clasificationMap[slug?.toLowerCase()] || slug;
     const classification = category.classificationName || slug;
@@ -194,9 +219,12 @@ export default function CategoryPage() {
       <section className="EventContainer">
         {attractions.map((attraction) => (
           <AttractionCard
-            key={attraction.id}
+            id={attraction.id}
             name={attraction.name}
             image={attraction.images?.[0]?.url}
+            showHeart={true}
+            isSaved={wishlist.includes(attraction.id)}
+            onToggleSave={handleWishlistClick}
           />
         ))}
       </section>
@@ -206,11 +234,14 @@ export default function CategoryPage() {
           <>
             {events.map((event) => (
               <EventCard
-                key={event.id}
+                id={event.id}
                 name={event.name}
                 date={event.dates?.start?.localDate}
                 image={event.images?.[0]?.url}
                 link={event.id}
+                showHeart={true}
+                isSaved={wishlist.includes(event.id)}
+                onToggleSave={handleWishlistClick}
               />
             ))}
           </>
@@ -223,11 +254,14 @@ export default function CategoryPage() {
       <section className="EventContainer">
         {venues.map((venue) => (
           <VenueCard
-           key={venue.id}
+           id={venue.id}
             name={venue.name}
             image={venue.images?.[0]?.url}
             country={venue.country?.name}
             city={venue.city?.name}
+            showHeart={true}
+            isSaved={wishlist.includes(venue.id)}
+            onToggleSave={handleWishlistClick}
           />
         ))}
       </section>
