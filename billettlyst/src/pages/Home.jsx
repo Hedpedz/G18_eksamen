@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import EventCard from "../components/EventCard";
 import CityEventCard from "../components/CityEventCard";
+import "../styles/CategoryPage.scss";
 
 const FESTIVAL_SEARCH_WORDS = [
     "Tons of Rock",
@@ -23,7 +24,7 @@ export default function Home() {
             for (const term of FESTIVAL_SEARCH_WORDS) {
                 await wait(100);
                 
-                const apiUrl = `https://app.ticketmaster.com/discovery/v2/attractions.json?apikey=${API_Key}&preferredCountry=NO&keyword=${term}&size=1&sort=relevance,desc`;
+                const apiUrl = `https://app.ticketmaster.com/discovery/v2/attractions.json?apikey=${API_Key}&preferredCountry=NO&keyword=${term}&size=1`;
                 
                 const response = await fetch(apiUrl);
                 
@@ -57,7 +58,8 @@ export default function Home() {
 
     return (
         <>
-            <h1>Utvalgte Festivaler</h1>
+        <h1>Utvalgte Festivaler</h1>
+        <section className="EventContainer">
             {!festivalItems ? (
                 <p>Laster festivaler...</p>
             ) : (
@@ -78,6 +80,8 @@ export default function Home() {
                     );
                 })
             )}
+            </section>
+
 
             <article className="city-buttons"
             aria-label="Opplevelser i storbyer">
@@ -91,7 +95,7 @@ export default function Home() {
             {selectedCity && (
                 <h3>I {selectedCity} kan du oppleve:</h3>
             )}
-
+            <section className="EventContainer">
             {cityEvents.length > 0 ? (
                 cityEvents.map((event) => {
                     const imageUrl = event.images?.[0]?.url;
@@ -113,6 +117,7 @@ export default function Home() {
             ) : (
                 selectedCity && <p>Laster arrangementer for {selectedCity} eller ingen funnet...</p>
             )}
+            </section>
         </>
     );
 }

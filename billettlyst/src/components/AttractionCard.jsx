@@ -1,6 +1,7 @@
-import '../styles/EventCard.scss';
-import regularHeartIcon from '../website_images/heart-regular.svg';
-import solidHeartIcon from '../website_images/heart-solid.svg';
+import "../styles/EventCard.scss";
+import regularHeartIcon from "../website_images/heart-regular.svg";
+import solidHeartIcon from "../website_images/heart-solid.svg";
+import "../pages/Home"
 
 export default function AttractionCard({ id, name, image, showHeart, isSaved, onToggleSave }) {
 

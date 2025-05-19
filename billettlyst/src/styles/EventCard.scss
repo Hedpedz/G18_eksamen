@@ -1,23 +1,48 @@
-.event-card{
-    width: 25%;
-    min-width: 300px;
- 
-    img{
-        height: auto;
-        max-height: 300px;
-        width: 100%;
+.EventContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+  
+  .event-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: calc((100% - 4rem) / 3);
+   
+  
+    img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      display: block;
     }
+
     .heart-button{
         background: none;
         border: none;
         padding: 0;
         height: 15px;
         width: 15px;
-
     }
     .heart-icon{
         width: 100%;
         height: 100%;
         object-fit: contain;
     }
+
+    
 }
+   
+  
+  @media (max-width: 992px) {
+    .event-card {
+      width: calc((100% - 2rem) / 2);
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .event-card {
+      width: 100%;
+    }
+  }
