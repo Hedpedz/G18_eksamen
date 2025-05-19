@@ -7,8 +7,6 @@ import EventCard from "../components/EventCard";
 export default function EventPage() {
   const [event, setEvent] = useState([]);
   const { id } = useParams();
-  const [Start, setStart] = useState("Unknown");
-  const [End, setEnd] = useState("Unknown");
   const [genre, setGenre] = useState(null);
   const [artistGenre, setArtistGenre] = useState(null);
   const [tickets, setTickets] = useState([]);
@@ -66,29 +64,6 @@ export default function EventPage() {
     }
   }, [event]);
 
-  useEffect(() => {
-    const start = event.sales?.public?.startDateTime;
-    const end = event.sales?.public?.endDateTime;
-
-    if (start) {
-      setStart(new Date(start).toLocaleString("no-NO"));
-    }
-    if (end) {
-      setEnd(new Date(end).toLocaleString("no-NO"));
-    }
-  }, [event]);
-
-  useEffect(() => {
-    const start = event.sales?.public?.startDateTime;
-    const end = event.sales?.public?.endDateTime;
-
-    if (start) {
-      setStart(new Date(start).toLocaleString("no-NO"));
-    }
-    if (end) {
-      setEnd(new Date(end).toLocaleString("no-NO"));
-    }
-  }, [event]);
 
   return (
     <>

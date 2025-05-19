@@ -247,6 +247,8 @@ return (
               key={event.id}
               id={event.id}
               name={event.name}
+              city={event?._embedded?.venues?.[0]?.city?.name}
+              country={event?._embedded?.venues?.[0]?.country?.name}
               date={event.dates?.start?.localDate}
               image={event.images?.[0]?.url}
               link={event.id}

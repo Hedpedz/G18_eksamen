@@ -13,6 +13,8 @@ export default function VenueCard({ id, name, image, country, city, showHeart, i
     >
       <img src={image} alt={name} />
       <h3>{name}</h3>
+      <p>{city}</p>
+      <p>{country}</p>
       {showHeart &&(
         <button
         onClick={() => onToggleSave(id)}
@@ -29,8 +31,7 @@ export default function VenueCard({ id, name, image, country, city, showHeart, i
           className="heart-icon"/>
         </button>
       )}
-      <p>{country}</p>
-      <p>{city}</p>
+      
     </article>
   );
 }
