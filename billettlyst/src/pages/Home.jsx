@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"; 
+import { Link } from "react-router-dom";
 import EventCard from "../components/EventCard";
 import CityEventCard from "../components/CityEventCard";
-import "../styles/CategoryPage.scss";
+import "../styles/CategoryPage.scss"; 
+import "../styles/Home.scss"; 
 
 const FESTIVAL_SEARCH_WORDS = [
     "Tons of Rock",
@@ -14,72 +16,71 @@ const API_Key = "An0Gfh3JYmKpW5rJIqCetXQuRadlfUhp";
 export default function Home() {
     const [festivalItems, setFestivalItems] = useState(null);
     const [cityEvents, setCityEvents] = useState([]);
-    const [selectedCity, setSelectedCity] = useState("");
+    const [selectedCity, setSelectedCity] = useState("Oslo");
 
     useEffect(() => {
         const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-        (async () => {
+        const fetchFestivalAttractions = async () => {
             const results = [];
             for (const term of FESTIVAL_SEARCH_WORDS) {
                 await wait(100);
+                try {
+
+                    const apiUrl = `https://app.ticketmaster.com/discovery/v2/attractions.json?apikey=${API_Key}&preferredCountry=NO&keyword=${term}&size=1&classificationName=Music,Festival`;
+
+                    const response = await fetch(apiUrl);
                 
-                const apiUrl = `https://app.ticketmaster.com/discovery/v2/attractions.json?apikey=${API_Key}&preferredCountry=NO&keyword=${term}&size=1`;
-                
-                const response = await fetch(apiUrl);
-                
-                if (response.ok) { 
                     const jsonData = await response.json();
                     if (jsonData?._embedded?.attractions?.[0]) {
                         results.push(jsonData._embedded.attractions[0]);
                     }
-                }
+                } catch (e) { }
             }
             setFestivalItems(results);
-        })();
+        };
+        fetchFestivalAttractions();
     }, []);
 
     const fetchCityEvents = async (city) => {
         setSelectedCity(city);
         setCityEvents([]);
-        const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${API_Key}&city=${city}&size=10&sort=date,asc`;
         try {
+            const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${API_Key}&city=${city}&size=10&sort=date,asc`;
             const response = await fetch(apiUrl);
-            if (response.ok) {
-                const jsonData = await response.json();
-                setCityEvents(jsonData?._embedded?.events || []);
-            } else {
-                setCityEvents([]);
-            }
+            const jsonData = await response.json();
+            setCityEvents(jsonData?._embedded?.events || []);
         } catch (error) {
             setCityEvents([]);
         }
     };
+    useEffect(() => {
+        if (!cityEvents.length && selectedCity === "Oslo") {
+             fetchCityEvents("Oslo");
+        }
+    }, []);
 
     return (
-        <>
-        <h1>Utvalgte Festivaler</h1>
-        <section className="EventContainer">
-            {!festivalItems ? (
-                <p>Laster festivaler...</p>
-            ) : (
-                festivalItems.map((item) => {
-                    const img = item.images?.[0]?.url; 
-                    const dateInfo = item.upcomingEvents?._total > 0
-                        ? `Kommende arrangementer: ${item.upcomingEvents._total}`
-                        : null;
-
-                    return (
-                        <EventCard
-                            key={item.id} 
-                            name={item.name}
-                            image={img}
-                            link={item.id}
-                            date={dateInfo}
-                        />
-                    );
-                })
-            )}
+        <> 
+        <h2>Utvalgte Festivaler</h2>
+        <section className="Event-Card">
+                {!festivalItems ? (
+                    <p>Laster festivaler...</p>
+                ) : festivalItems.length > 0 ? (
+                    festivalItems.map((item) => {
+                        const img = item.images?.[0]?.url; 
+                        return (
+                            <Link key={item.id} to={`/event/${item.id}`}>
+                                <EventCard
+                                    name={item.name}
+                                    image={img}
+                                />
+                            </Link>
+                        );
+                    })
+                ) : (
+                    <p>Ingen festivaler funnet.</p>
+                )}
             </section>
 
 
