@@ -75,10 +75,11 @@ export default function EventPage() {
       <img src={event?.images?.[0]?.url} alt={event.name} />
       <article>
         <h1>{event?.name}</h1>
-        <h4>Genre: {genre}</h4>
-        <h2>Date: {event?.dates?.start?.localDate}</h2>
-        <h3>City: {event?._embedded?.venues[0]?.city?.name}</h3>
-        <h3>Country: {event?._embedded?.venues[0]?.country?.name}</h3>
+        <p>Genre: {genre}</p>
+        <p>Date: {event?.dates?.start?.localDate}</p>
+        <p>City: {event?._embedded?.venues[0]?.city?.name}</p>
+        <p>Country: {event?._embedded?.venues[0]?.country?.name}</p>
+        
         <h2>Ticket sales from:</h2>
         <p>Sale starts:{Start}</p>
         <p>Sale stops: {End}</p>

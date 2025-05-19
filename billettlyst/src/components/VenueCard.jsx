@@ -10,7 +10,7 @@ export default function VenueCard({ id, name, image, country, city, showHeart, i
   return (
     <article className="event-card">
       <img src={image} alt={name} />
-      <h2>{name}</h2>
+      <h3>{name}</h3>
       {showHeart &&(
         <button
         onClick={() => onToggleSave(id)}

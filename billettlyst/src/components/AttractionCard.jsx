@@ -9,7 +9,7 @@ export default function AttractionCard({ id, name, image, showHeart, isSaved, on
   return (
     <article className="event-card">
     <img src={image} alt={name}/>
-      <h1>{name}</h1>
+      <h3>{name}</h3>
       {showHeart &&(
         <button
         onClick={() => onToggleSave(id)}
