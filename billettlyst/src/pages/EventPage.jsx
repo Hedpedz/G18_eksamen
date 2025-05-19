@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import '../styles/EventPage.scss';
+import "../styles/EventPage.scss";
 import ArtistCard from "../components/ArtistCard";
 
 export default function EventPage() {

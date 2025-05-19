@@ -1,3 +1,4 @@
+import "../styles/EventPage.scss";
 export default function CityEventCard({ name, image, country, city, date }) {
     return (
       <article className="event-card">

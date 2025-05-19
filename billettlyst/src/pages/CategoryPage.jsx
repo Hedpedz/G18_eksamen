@@ -4,6 +4,8 @@ import AttractionCard from "../components/AttractionCard";
 import EventCard from "../components/EventCard";
 import VenueCard from "../components/VenueCard";
 import "../styles/CategoryPage.scss";
+import "../styles/EventCard.scss";
+
 
 const API_Key = "An0Gfh3JYmKpW5rJIqCetXQuRadlfUhp";
 
@@ -180,7 +182,7 @@ export default function CategoryPage() {
 return (
   <>
     <h1>Søkefelt</h1>
-    <section className="EventContainer">
+    <section className="search-bar">
       <input
         type="text"
         placeholder="Søk..."
