@@ -79,9 +79,9 @@ export default function Home() {
                 })
             )}
 
-            
-            <h2>Opplevelser i Storbyer</h2>
-            <article className="city-buttons">
+            <article className="city-buttons"
+            aria-label="Opplevelser i storbyer">
+                 <h2>Opplevelser i Storbyer</h2>
                 <button onClick={() => fetchCityEvents("Oslo")}>Oslo</button>
                 <button onClick={() => fetchCityEvents("Berlin")}>Berlin</button>
                 <button onClick={() => fetchCityEvents("London")}>London</button>
