@@ -1,0 +1,18 @@
+
+
+
+.city-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:space-between;
+
+    button {
+        
+        background-color: #8767fb;
+        color: white;
+        padding: 1rem 3rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 2rem;
+    }
+}
